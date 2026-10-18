@@ -1,4 +1,4 @@
-.PHONY: up up-infra down reset status create-topic describe-topic list-topics delete-topic restart-apps
+.PHONY: up up-infra down reset status create-topic describe-topic list-topics delete-topic restart-apps restart-ui
 
 # Явно указываем имя файла — так точно не будет ошибок с пустым именем
 COMPOSE_FILE := docker-compose.yaml
@@ -20,24 +20,36 @@ check-cluster:
 	fi
 
 up:
-	@echo "🚀 Запуск всего (Kafka + продюсер + консьюмеры)..."
+	@echo "🚀 Запуск всего (Kafka + UI + продюсер + консьюмеры)..."
 	docker compose -f $(COMPOSE_FILE) up --build -d
 
 up-infra:
-	@echo "🚀 Запуск только инфраструктуры Kafka (без продюсера и консьюмеров)..."
-	docker compose -f $(COMPOSE_FILE) up --build -d kafka-1 kafka-2 kafka-3 zookeeper-1
+	@echo "🚀 Запуск инфраструктуры (Kafka + Zookeeper + kafka-ui) без приложений..."
+	# Теперь kafka-ui стартует вместе с брокерами
+	docker compose -f $(COMPOSE_FILE) up --build -d kafka-1 kafka-2 kafka-3 zookeeper-1 kafka-ui
 
 down:
 	@echo "🛑 Остановка всего кластера и приложений..."
 	docker compose -f $(COMPOSE_FILE) down
 
 reset:
-	@echo "💥 Полный сброс (удаление контейнеров и volumes)..."
-	docker compose -f $(COMPOSE_FILE) down -v
+	@echo "💥 Полный сброс (контейнеры, volumes, orphan-сервисы)..."
+	docker compose -f $(COMPOSE_FILE) down -v --remove-orphans || true
+	@echo "🧹 Попытка удалить сеть проекта, если осталась..."
+	docker network rm yp_kafka_practice_1_kafka-net 2>/dev/null || true
+	@echo "✅ Сброс завершён."
 
 restart-apps:
-	@echo "🔄 Перезапуск только продюсера и консьюмеров (Kafka остаётся работать)..."
+	@echo "🔄 Перезапуск только продюсера и консьюмеров (Kafka и UI остаются работать)..."
 	docker compose -f $(COMPOSE_FILE) restart producer consumer_a consumer_b
+
+restart-ui:
+	@echo "🔄 Перезапуск Kafka UI..."
+	docker compose -f $(COMPOSE_FILE) restart kafka-ui
+
+status-ui:
+	@echo "👁 Статус Kafka UI:"
+	docker ps --filter "name=kafka-ui" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 
 status:
 	@echo "📊 Статус контейнеров Kafka:"
