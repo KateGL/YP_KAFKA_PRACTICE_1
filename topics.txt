@@ -1,0 +1,17 @@
+## `topic.txt`
+
+```text
+# Команда консоли, которой был создан топик
+docker exec kafka-1 kafka-topics \
+  --bootstrap-server kafka-1:9092,kafka-2:9092,kafka-3:9092 \
+  --create \
+  --topic test-topic \
+  --partitions 3 \
+  --replication-factor 3 \
+  --if-not-exists
+
+# Подробная информация о созданном топике (вывод команды describe-topic)
+Topic: test-topic	PartitionCount: 3	ReplicationFactor: 3	Configs: segment.bytes=1073741824,retention.ms=604800000
+	Topic: test-topic	Partition: 0	Leader: 1	Replicas: 1,2,3	Isr: 1,2,3
+	Topic: test-topic	Partition: 1	Leader: 2	Replicas: 2,3,1	Isr: 2,3,1
+	Topic: test-topic	Partition: 2	Leader: 3	Replicas: 3,1,2	Isr: 3,1,2
