@@ -74,13 +74,14 @@ services:
     build:
       context: ./services/producer
       dockerfile: Dockerfile
-    container_name: producer
     working_dir: /app
     command: python service.py
     environment:
       KAFKA_BOOTSTRAP_SERVERS: kafka-1:9092,kafka-2:9092,kafka-3:9092
     networks:
       - kafka-net
+    deploy:
+      replicas: 2
     depends_on:
       - kafka-1
       - kafka-2
@@ -90,14 +91,16 @@ services:
     build:
       context: ./services/consumer_a
       dockerfile: Dockerfile
-    container_name: consumer_a
     working_dir: /app
     command: python service.py
     environment:
       KAFKA_BOOTSTRAP_SERVERS: kafka-1:9092,kafka-2:9092,kafka-3:9092
-      CONSUMER_GROUP_ID: group-a
+      TOPIC: test-topic
+      CONSUMER_GROUP_ID: group-single
     networks:
       - kafka-net
+    deploy:
+      replicas: 2
     depends_on:
       - kafka-1
       - kafka-2
@@ -107,14 +110,16 @@ services:
     build:
       context: ./services/consumer_b
       dockerfile: Dockerfile
-    container_name: consumer_b
     working_dir: /app
     command: python service.py
     environment:
       KAFKA_BOOTSTRAP_SERVERS: kafka-1:9092,kafka-2:9092,kafka-3:9092
-      CONSUMER_GROUP_ID: group-b
+      TOPIC: test-topic
+      CONSUMER_GROUP_ID: group-batch
     networks:
       - kafka-net
+    deploy:
+      replicas: 2
     depends_on:
       - kafka-1
       - kafka-2

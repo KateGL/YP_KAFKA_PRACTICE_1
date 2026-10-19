@@ -39,9 +39,25 @@ reset:
 	docker network rm yp_kafka_practice_1_kafka-net 2>/dev/null || true
 	@echo "✅ Сброс завершён."
 
+# Перезапуск без пересборки (быстро, но не подхватывает новый код)
 restart-apps:
-	@echo "🔄 Перезапуск только продюсера и консьюмеров (Kafka и UI остаются работать)..."
-	docker compose -f $(COMPOSE_FILE) restart producer consumer_a consumer_b
+	@echo "🔄 Перезапуск продюсера и консьюмеров (без пересборки образов)..."
+	docker compose -f $(COMPOSE_FILE) restart producer consumer_a consumer_b || \
+		docker compose -f $(COMPOSE_FILE) restart producer-1 producer-2 producer-3 || true
+
+# Полный сброс и пересборка приложений (гарантированно подхватит новый код)
+reset-apps: down-apps up-apps
+
+down-apps:
+	@echo "🛑 Остановка продюсера и консьюмеров..."
+	docker compose -f $(COMPOSE_FILE) down producer consumer_a consumer_b || \
+		docker compose -f $(COMPOSE_FILE) down producer-1 producer-2 producer-3 || true
+
+up-apps:
+	@echo "🚀 Сборка и запуск продюсера и консьюмеров..."
+	docker compose -f $(COMPOSE_FILE) up --build -d producer consumer_a consumer_b || \
+		docker compose -f $(COMPOSE_FILE) up --build -d producer-1 producer-2 producer-3
+
 
 restart-ui:
 	@echo "🔄 Перезапуск Kafka UI..."
