@@ -81,7 +81,7 @@ services:
     networks:
       - kafka-net
     deploy:
-      replicas: 2
+      replicas: 1
     depends_on:
       - kafka-1
       - kafka-2
@@ -100,7 +100,7 @@ services:
     networks:
       - kafka-net
     deploy:
-      replicas: 2
+      replicas: 1
     depends_on:
       - kafka-1
       - kafka-2
@@ -119,7 +119,7 @@ services:
     networks:
       - kafka-net
     deploy:
-      replicas: 2
+      replicas: 1
     depends_on:
       - kafka-1
       - kafka-2

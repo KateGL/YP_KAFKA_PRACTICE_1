@@ -7,11 +7,10 @@ docker exec kafka-1 kafka-topics \
   --create \
   --topic test-topic \
   --partitions 3 \
-  --replication-factor 3 \
+  --replication-factor 2 \
   --if-not-exists
 
 # Подробная информация о созданном топике (вывод команды describe-topic)
-Topic: test-topic	PartitionCount: 3	ReplicationFactor: 3	Configs: segment.bytes=1073741824,retention.ms=604800000
+Topic: test-topic	PartitionCount: 3	ReplicationFactor: 2	Configs: segment.bytes=1073741824,retention.ms=604800000
 	Topic: test-topic	Partition: 0	Leader: 1	Replicas: 1,2,3	Isr: 1,2,3
 	Topic: test-topic	Partition: 1	Leader: 2	Replicas: 2,3,1	Isr: 2,3,1
-	Topic: test-topic	Partition: 2	Leader: 3	Replicas: 3,1,2	Isr: 3,1,2
