@@ -88,6 +88,7 @@ create-topic: check-cluster
 		--topic "$(TOPIC)" \
 		--partitions "$(PARTITIONS)" \
 		--replication-factor "$(REPLICATION_FACTOR)" \
+		--config min.insync.replicas="$(REPLICATION_FACTOR)" \
 		--if-not-exists
 
 describe-topic: check-cluster
