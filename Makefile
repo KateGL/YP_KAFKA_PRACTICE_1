@@ -7,7 +7,7 @@ CONTAINER_PREFIX := kafka-
 BOOTSTRAP_SERVERS := kafka-1:9092,kafka-2:9092,kafka-3:9092
 
 PARTITIONS ?= 3
-REPLICATION_FACTOR ?= 3
+REPLICATION_FACTOR ?= 2
 
 # Получаем ID контейнера kafka-1
 KAFKA_CONTAINER := $(shell docker compose -f $(COMPOSE_FILE) ps -q kafka-1 2>/dev/null)
@@ -88,6 +88,7 @@ create-topic: check-cluster
 		--topic "$(TOPIC)" \
 		--partitions "$(PARTITIONS)" \
 		--replication-factor "$(REPLICATION_FACTOR)" \
+		--config min.insync.replicas="$(REPLICATION_FACTOR)" \
 		--if-not-exists
 
 describe-topic: check-cluster

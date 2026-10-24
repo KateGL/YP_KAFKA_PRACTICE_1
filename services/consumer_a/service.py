@@ -1,4 +1,5 @@
 import os
+import sys
 from confluent_kafka import Consumer
 from message import MessagePayload
 
@@ -37,10 +38,12 @@ def main():
             except Exception as e:
                 print(f"❌ Ошибка сериализации/обработки: {e}")
                 # продолжаем работать, не прерываем цикл
-    except KeyboardInterrupt:
-        pass
+    except Exception as e:
+        print(f"💥 Непредвиденная ошибка: {e}", file=sys.stderr)
     finally:
+        print("🛑 Закрываем Consumer...")
         c.close()
+        print("✅ Consumer закрыт.")
 
 if __name__ == "__main__":
     main()

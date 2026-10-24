@@ -76,12 +76,13 @@ services:
       dockerfile: Dockerfile
     working_dir: /app
     command: python service.py
+    stop_grace_period: 15s
     environment:
       KAFKA_BOOTSTRAP_SERVERS: kafka-1:9092,kafka-2:9092,kafka-3:9092
     networks:
       - kafka-net
     deploy:
-      replicas: 2
+      replicas: 1
     depends_on:
       - kafka-1
       - kafka-2
@@ -93,6 +94,7 @@ services:
       dockerfile: Dockerfile
     working_dir: /app
     command: python service.py
+    stop_grace_period: 15s
     environment:
       KAFKA_BOOTSTRAP_SERVERS: kafka-1:9092,kafka-2:9092,kafka-3:9092
       TOPIC: test-topic
@@ -100,7 +102,7 @@ services:
     networks:
       - kafka-net
     deploy:
-      replicas: 2
+      replicas: 1
     depends_on:
       - kafka-1
       - kafka-2
@@ -112,6 +114,7 @@ services:
       dockerfile: Dockerfile
     working_dir: /app
     command: python service.py
+    stop_grace_period: 15s
     environment:
       KAFKA_BOOTSTRAP_SERVERS: kafka-1:9092,kafka-2:9092,kafka-3:9092
       TOPIC: test-topic
@@ -119,7 +122,7 @@ services:
     networks:
       - kafka-net
     deploy:
-      replicas: 2
+      replicas: 1
     depends_on:
       - kafka-1
       - kafka-2
